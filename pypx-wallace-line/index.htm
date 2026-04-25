@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wallace Line Interactive Map</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b1d2a;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    position: relative;
+    display: inline-block;
+    max-width: 900px;
+}
+
+img {
+    width: 100%;
+    transition: opacity 0.5s ease;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.dot {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.2s;
+}
+
+.dot.active {
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+.yellow { background: yellow; }
+.orange { background: orange; }
+.red { background: red; }
+.green { background: limegreen; }
+.blue { background: blue; }
+.white { background: white; }
+.purple { background: purple; }
+.black { background: black; }
+.brown { background: rgba(165,42,42,0.5); }
+
+#info {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: bold;
+    max-width: 80%;
+}
+
+.balloon {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 35vw;
+    max-width: 400px;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    z-index: 999;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px white)
+                    drop-shadow(0 0 10px white);
+}
+
+.balloon.show {
+    animation: popBounce 0.6s ease forwards;
+}
+
+.balloon.fadeout {
+    animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes popBounce {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -60%) scale(1.3); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
+}
+
+.dot-container {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.dot-label {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+#info {
+    transition: opacity 0.5s ease;
+}
+
+#info.fadeout {
+    opacity: 0;
+}
+#info.wallace-mode {
+    bottom: 5%;
+    width: 90%;          /* stretch almost full width */
+    max-width: none;     /* remove limit */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🌏 Wallace Line Explorer</h2>
+
+<div class="container">
+    <img id="map" src="images/map.jpg">
+
+    <div class="dot yellow" style="top:52%; left:9%;" onclick="trigger('elephant', this)"></div>
+    <div class="dot orange" style="top:58%; left:8.5%;" onclick="trigger('tiger', this)"></div>
+    <div class="dot red" style="top:26%; left:31%;" onclick="trigger('orangutan', this)"></div>
+    <div class="dot green" style="top:38%; left:47.5%;" onclick="trigger('crocodile', this)"></div>
+    <div class="dot blue" style="top:48%; left:60%;" onclick="trigger('kakatua', this)"></div>
+    <div class="dot white" style="top:87.5%; left:72%;" onclick="trigger('komodo', this)"></div>
+    <div class="dot purple" style="top:54.5%; left:96%;" onclick="trigger('kangaroo', this)"></div>
+    <div class="dot black" style="top:14.5%; left:66.5%;" onclick="trigger('wallace', this)"></div>
+
+    <div class="dot-container" style="top:90%; left:10%;">
+        <div class="dot brown" onclick="changeMap(this)"></div>
+        <div class="dot-label">made by Vania</div>
+    </div>
+
+    <div id="info">Tap a dot to explore!</div>
+</div>
+
+<script>
+const data = {
+    elephant: { sound:"sounds/elephant.mp3", voice:"sounds/elephant-voice.mp3", text:"Elephants live in Sumatra. They are large, intelligent animals with strong trunks.", img:"images/elephant.png" },
+    tiger: { sound:"sounds/tiger.mp3", voice:"sounds/tiger-voice.mp3", text:"Tigers in Sumatra are powerful predators with orange fur and black stripes.", img:"images/tiger.png" },
+    orangutan: { sound:"sounds/orangutan.mp3", voice:"sounds/orangutan-voice.mp3", text:"Orangutans live in Borneo. They are smart apes that live in trees.", img:"images/orangutan.png" },
+    crocodile: { sound:"sounds/crocodile.mp3", voice:"sounds/crocodile-voice.mp3", text:"Crocodiles are strong reptiles that live in rivers and swamps.", img:"images/crocodile.png" },
+    kakatua: { sound:"sounds/kakatua.mp3", voice:"sounds/kakatua-voice.mp3", text:"Kakatua, or cockatoos, are noisy birds found in eastern Indonesia.", img:"images/kakatua.png" },
+    komodo: { sound:"sounds/komodo.mp3", voice:"sounds/komodo-voice.mp3", text:"Komodo dragons are the largest lizards in the world and live in Indonesia.", img:"images/komodo.png" },
+    kangaroo: { sound:"sounds/kangaroo.mp3", voice:"sounds/kangaroo-voice.mp3", text:"This is a Tree Kangaroos live in Papua and move by jumping over the trees.", img:"images/kangaroo.png" },
+    wallace: { sound:"sounds/wind.mp3", voice:"sounds/wallaceline-voice.mp3", text:"The Wallace Line is a bio-geographical boundary identified by Alfred Russel Wallace in 1863, separating Asian and Australian fauna. It runs through the Lombok Strait (between Bali and Lombok) and the Makassar Strait (between Borneo and Sulawesi), as the west and east side have different biomes.", img:"images/wallace.png" }
+};
+
+let currentAudio = null;
+let currentVoice = null;
+let currentBalloon = null;
+let activeDot = null;
+
+function trigger(animal, el) {
+
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+
+    if (currentVoice) {
+                currentVoice.pause();
+                currentVoice.currentTime = 0;
+    }
+
+    if (activeDot) activeDot.classList.remove("active");
+    if (currentBalloon) currentBalloon.remove();
+
+    el.classList.add("active");
+    activeDot = el;
+
+    const info = document.getElementById("info");
+    info.innerHTML = data[animal].text;
+
+    // special position for wallace
+    if (animal === "wallace") {
+    info.classList.add("wallace-mode");
+    } else {
+    info.classList.remove("wallace-mode");
+}
+    const balloon = document.createElement("img");
+    balloon.src = data[animal].img;
+    balloon.className = "balloon";
+    document.body.appendChild(balloon);
+
+    setTimeout(() => balloon.classList.add("show"), 10);
+    currentBalloon = balloon;
+
+    currentAudio = new Audio(data[animal].sound);
+    currentAudio.play();
+
+    currentAudio.onended = () => {
+        currentVoice = new Audio(data[animal].voice);
+        currentVoice.play();
+
+        currentVoice.onended = () => {
+    const text = document.getElementById("info");
+
+    // fade both
+    if (currentBalloon) currentBalloon.classList.add("fadeout");
+    text.classList.add("fadeout");
+
+    setTimeout(() => {
+        if (currentBalloon) {
+            currentBalloon.remove();
+            currentBalloon = null;
+        }
+
+        // reset text
+        text.classList.remove("fadeout");
+text.innerHTML = "Tap a dot to explore!";
+text.classList.remove("wallace-mode");
+    }, 500);
+};
+    };
+}
+
+let currentMap = 1;
+
+function changeMap() {
+    const map = document.getElementById("map");
+
+    map.classList.add("fade-out");
+
+    setTimeout(() => {
+        map.src = currentMap === 1 ? "images/map2.png" : "images/map.jpg";
+        currentMap = currentMap === 1 ? 2 : 1;
+        map.classList.remove("fade-out");
+    }, 500);
+}
+</script>
+
+</body>
+</html>
