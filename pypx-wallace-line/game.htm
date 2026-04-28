@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wallace Game Mode</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b1d2a;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    position: relative;
+    display: inline-block;
+    max-width: 900px;
+}
+
+img {
+    width: 100%;
+}
+
+.dot {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+}
+
+.yellow { background: yellow; }
+.orange { background: orange; }
+.red { background: red; }
+.green { background: limegreen; }
+.blue { background: blue; }
+.white { background: white; }
+.purple { background: purple; }
+
+#info {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 22px;
+    width: 40%;
+}
+.back-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 16px;
+    font-size: 16px;
+    background: lightblue;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+}
+
+.back-btn:hover {
+    transform: scale(1.1);
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎮 Wallace Line Game</h2>
+
+<div class="container">
+    <img src="images/map.jpg">
+<button class="back-btn" onclick="goBack()">⬅ Back</button>
+
+    <div class="dot yellow" style="top:52%; left:9%;" onclick="check('elephant')"></div>
+    <div class="dot orange" style="top:58%; left:8.5%;" onclick="check('tiger')"></div>
+    <div class="dot red" style="top:26%; left:31%;" onclick="check('orangutan')"></div>
+    <div class="dot green" style="top:38%; left:47.5%;" onclick="check('crocodile')"></div>
+    <div class="dot blue" style="top:48%; left:60%;" onclick="check('kakatua')"></div>
+    <div class="dot white" style="top:87.5%; left:72%;" onclick="check('komodo')"></div>
+    <div class="dot purple" style="top:54.5%; left:96%;" onclick="check('kangaroo')"></div>
+
+    <div id="info">Loading game...</div>
+</div>
+
+<script>
+
+
+let bgMusic = new Audio("sounds/bg-music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.6; // not too loud
+
+const correctSound = new Audio("sounds/correct.mp3");
+const wrongSound = new Audio("sounds/wrong.mp3");
+const clickSound = new Audio("sounds/click.mp3");
+
+
+
+const questions = [
+    { q: "Find the animal from Australia", a: "kangaroo" },
+    { q: "Find the largest lizard", a: "komodo" },
+    { q: "Find the animal from Sumatra", a: "elephant" },
+    { q: "Find the animal that lives in trees", a: "orangutan" }
+];
+
+let score = 0;
+let timeLeft = 90;
+let currentAnswer = "";
+let currentQuestionText = "";
+let canAnswer = false;
+
+function startGame() {
+    nextQuestion();
+
+    setInterval(() => {
+        timeLeft--;
+        updateUI();
+
+        if (timeLeft <= 0) {
+            bgMusic.pause(); // stop music
+            document.getElementById("info").innerHTML =
+                `🏆 Game Over!<br>Score: ${score}`;
+        }
+    }, 1000);
+}
+
+function nextQuestion() {
+    const random = questions[Math.floor(Math.random() * questions.length)];
+    currentAnswer = random.a;
+    currentQuestionText = random.q;
+
+    canAnswer = false;
+
+    document.getElementById("info").innerHTML =
+        currentQuestionText + "<br>⏳ Read carefully...";
+
+    setTimeout(() => {
+        canAnswer = true;
+        updateUI();
+    }, 3000);
+}
+
+function updateUI() {
+    document.getElementById("info").innerHTML =
+        currentQuestionText +
+        `<br>⏱️ ${timeLeft}s | ⭐ ${score}`;
+}
+
+function check(animal) {
+
+    if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+    }
+    clickSound.currentTime = 0;
+    clickSound.play().catch(()=>{});
+
+    if (!canAnswer) {
+        document.getElementById("info").innerHTML =
+            "⏳ Wait...";
+        return;
+    }
+
+    if (animal === currentAnswer) {
+        correctSound.currentTime = 0;
+        correctSound.play().catch(()=>{});
+        score++;
+        document.getElementById("info").innerHTML =
+            "✅ Correct!";
+
+        setTimeout(nextQuestion, 2000);
+
+    } else {
+        wrongSound.currentTime = 0;
+        wrongSound.play().catch(()=>{});
+        document.getElementById("info").innerHTML =
+            "❌ Try again!";
+    }
+}
+
+function goBack() {
+    window.location.href = "index.html";
+}
+
+startGame();
+
+</script>
+
+</body>
+</html>

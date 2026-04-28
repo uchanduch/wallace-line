@@ -106,9 +106,8 @@ img {
 }
 
 .dot-label {
-    font-size: 30px;
+    font-size: 20px;
     margin-top: 4px;
-    margin-left: 40px;
 }
 
 #info {
@@ -126,6 +125,26 @@ img {
     transform: translateX(-50%);
     text-align: center;
 }
+
+.play-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 16px;
+    font-size: 16px;
+    background: orange;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.1);
+}
 </style>
 </head>
 
@@ -133,8 +152,10 @@ img {
 
 <h2>🌏 Wallace Line Explorer</h2>
 
+
 <div class="container">
     <img id="map" src="images/map.jpg">
+    <button class="play-btn" onclick="startGamePage()">🎮 Play</button>
 
     <div class="dot yellow" style="top:52%; left:9%;" onclick="trigger('elephant', this)"></div>
     <div class="dot orange" style="top:58%; left:8.5%;" onclick="trigger('tiger', this)"></div>
@@ -145,7 +166,7 @@ img {
     <div class="dot purple" style="top:54.5%; left:96%;" onclick="trigger('kangaroo', this)"></div>
     <div class="dot black" style="top:14.5%; left:66.5%;" onclick="trigger('wallace', this)"></div>
 
-    <div class="dot-container" style="top:95%; left:15%;">
+    <div class="dot-container" style="top:90%; left:10%;">
         <div class="dot brown" onclick="changeMap(this)"></div>
         <div class="dot-label">made by Vania</div>
     </div>
@@ -246,6 +267,9 @@ function changeMap() {
         currentMap = currentMap === 1 ? 2 : 1;
         map.classList.remove("fade-out");
     }, 500);
+}
+function startGamePage() {
+    window.location.href = "game.html";
 }
 </script>
 
