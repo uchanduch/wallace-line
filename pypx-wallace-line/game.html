@@ -109,7 +109,7 @@ const clickSound = new Audio("sounds/click.mp3");
 
 
 
-const questions = [
+let remainingQuestions = [
     { q: "Find the large intelligent animal with a strong trunk", a: "elephant" },
     { q: "Find the animal that lives in Sumatra and has a trunk", a: "elephant" },
     { q: "Find the powerful predator with orange fur and black stripes", a: "tiger" },
@@ -155,7 +155,20 @@ function startGame() {
 }
 
 function nextQuestion() {
-    const random = questions[Math.floor(Math.random() * questions.length)];
+
+    if (remainingQuestions.length === 0) {
+        bgMusic.pause();
+        document.getElementById("info").innerHTML =
+            `🎉 All questions finished!<br>Score: ${score}`;
+        return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+    const random = remainingQuestions[randomIndex];
+
+    // REMOVE the question so it won't appear again
+    remainingQuestions.splice(randomIndex, 1);
+
     currentAnswer = random.a;
     currentQuestionText = random.q;
 
