@@ -40,6 +40,8 @@ img {
 .blue { background: blue; }
 .white { background: white; }
 .purple { background: purple; }
+.black { background: black; }
+
 
 #info {
     position: absolute;
@@ -89,6 +91,7 @@ img {
     <div class="dot blue" style="top:48%; left:60%;" onclick="check('kakatua')"></div>
     <div class="dot white" style="top:87.5%; left:72%;" onclick="check('komodo')"></div>
     <div class="dot purple" style="top:54.5%; left:96%;" onclick="check('kangaroo')"></div>
+    <div class="dot black" style="top:14.5%; left:66.5%;" onclick="trigger('wallace', this)"></div>
 
     <div id="info">Loading game...</div>
 </div>
@@ -115,14 +118,14 @@ const questions = [
     { q: "Find the animal that lives in Borneo and climbs trees", a: "orangutan" },
     { q: "Find the reptile that lives in rivers and swamps", a: "crocodile" },
     { q: "Find the strong animal that lives in water and has a long body", a: "crocodile" },
-    { q: "Find the noisy bird from eastern Indonesia", a: "cockatoo" },
-    { q: "Find the bird also called kakatua", a: "cockatoo" },
-    { q: "Find the largest lizard in the world", a: "komodo dragon" },
-    { q: "Find the giant lizard that lives in Indonesia", a: "komodo dragon" },
-    { q: "Find the animal that jumps between trees in Papua", a: "tree kangaroo" },
-    { q: "Find the kangaroo that lives in trees", a: "tree kangaroo" },
-    { q: "Find the boundary that separates Asian and Australian animals", a: "wallace line" },
-    { q: "Find the line discovered by Alfred Russel Wallace", a: "wallace line" },
+    { q: "Find the noisy bird from eastern Indonesia", a: "kakatua" },
+    { q: "Find the bird also called kakatua", a: "kakatua" },
+    { q: "Find the largest lizard in the world", a: "komodo" },
+    { q: "Find the giant lizard that lives in Indonesia", a: "komodo" },
+    { q: "Find the animal that jumps between trees in Papua", a: "kangaroo" },
+    { q: "Find the kangaroo that lives in trees", a: "kangaroo" },
+    { q: "Find the boundary that separates Asian and Australian animals", a: "wallace" },
+    { q: "Find the line discovered by Alfred Russel Wallace", a: "wallace" },
     { q: "Find the animal known for its intelligence and large body", a: "elephant" },
     { q: "Find the striped predator from Sumatra", a: "tiger" },
     { q: "Find the tree-living ape from Borneo", a: "orangutan" },
